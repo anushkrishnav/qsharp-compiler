@@ -591,10 +591,14 @@ namespace Microsoft.Quantum.QsCompiler.CompilationBuilder
             ScopeContext context,
             List<Diagnostic> diagnostics)
         {
-            var statementPos = node.Fragment.Range.Start;
+            var statementPosition = node.Fragment.Range.Start;
+            context.Inference.SetStatementPosition(statementPosition);
+
             var location = new QsLocation(node.RelativePosition, node.Fragment.HeaderRange);
-            var (statement, messages) = build(location, context);
-            diagnostics.AddRange(messages.Select(msg => Diagnostics.Generate(context.Symbols.SourceFile, msg, statementPos)));
+            var (statement, buildDiagnostics) = build(location, context);
+            diagnostics.AddRange(buildDiagnostics
+                .Select(diagnostic => Diagnostics.Generate(context.Symbols.SourceFile, diagnostic, statementPosition)));
+
             return statement;
         }
 
@@ -1329,6 +1333,12 @@ namespace Microsoft.Quantum.QsCompiler.CompilationBuilder
             var implementation = BuildScope(root.Children.GetEnumerator(), context, diagnostics);
             context.Symbols.EndScope();
 
+            // Finalize types.
+            diagnostics.AddRange(context.Inference.AmbiguousDiagnostics
+                .Select(diagnostic => Diagnostics.Generate(sourceFile, diagnostic)));
+            var resolver = InferenceContextModule.Resolver(context.Inference);
+            implementation = resolver.Statements.OnScope(implementation);
+
             // Verify that all paths return a value if needed (or fail), and that the specialization's required runtime
             // capabilities are supported by the execution target.
             var (allPathsReturn, returnDiagnostics) = SyntaxProcessing.SyntaxTree.AllPathsReturnValueOrFail(implementation);
@@ -1474,10 +1484,8 @@ namespace Microsoft.Quantum.QsCompiler.CompilationBuilder
                 {
                     var specPos = root.Fragment.Range.Start;
                     var (arg, messages) = buildArg(userDefined.Item);
-                    foreach (var msg in messages)
-                    {
-                        diagnostics.Add(Diagnostics.Generate(spec.Source.AssemblyOrCodeFile, msg, specPos));
-                    }
+                    diagnostics.AddRange(messages.Select(message =>
+                        Diagnostics.Generate(spec.Source.AssemblyOrCodeFile, message, specPos)));
 
                     QsGeneratorDirective? GetDirective(QsSpecializationKind k) => definedSpecs.TryGetValue(k, out defined) && defined.Item1.IsValue ? defined.Item1.Item : null;
                     var requiredFunctorSupport = RequiredFunctorSupport(kind, GetDirective).ToImmutableHashSet();
@@ -1490,7 +1498,8 @@ namespace Microsoft.Quantum.QsCompiler.CompilationBuilder
                         root, spec.Source.AssemblyOrCodeFile, arg, requiredFunctorSupport, context, diagnostics);
                     QsCompilerError.Verify(context.Symbols.AllScopesClosed, "all scopes should be closed");
                 }
-                implementation = implementation ?? SpecializationImplementation.Intrinsic;
+
+                implementation ??= SpecializationImplementation.Intrinsic;
                 return GetSpecialization(spec, signature, implementation, comments);
             }
 
