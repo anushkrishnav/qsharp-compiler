@@ -138,13 +138,6 @@ namespace Microsoft.Quantum.QIR
         // internal helpers to simplify common code
 
         /// <summary>
-        /// Type by which data allocated as global constant array is passed to the runtime.
-        /// String and big integers for example are instantiated with a data array.
-        /// </summary>
-        internal IPointerType DataArrayPointer =>
-            this.context.Int8Type.CreatePointerType();
-
-        /// <summary>
         /// Given the type of a pointer to a struct, returns the type of the struct.
         /// This method thus is the inverse mapping of CreatePointerType.
         /// Throws an argument exception if the given type is not a pointer to a struct.
@@ -160,6 +153,13 @@ namespace Microsoft.Quantum.QIR
         /// </summary>
         internal static ITypeRef PointerElementType(Value pointer) =>
             ((IPointerType)pointer.NativeType).ElementType;
+
+        /// <summary>
+        /// Type by which data allocated as global constant array is passed to the runtime.
+        /// String and big integers for example are instantiated with a data array.
+        /// </summary>
+        internal IPointerType DataArrayPointer =>
+            this.context.Int8Type.CreatePointerType();
 
         // public members
 
@@ -187,13 +187,13 @@ namespace Microsoft.Quantum.QIR
         public static bool IsTypedTuple(ITypeRef t) =>
             t is IPointerType pt
             && pt.ElementType is IStructType st
-            && st.Name == null
+            && string.IsNullOrEmpty(st.Name)
             && st.Members.Count > 0;
 
         /// <summary>
         /// Determines whether an LLVM type is a pointer to an opaque tuple.
         /// </summary>
-        public static bool IsTuple(ITypeRef t) =>
+        public static bool IsTupleOrUnit(ITypeRef t) =>
             t is IPointerType pt
             && pt.ElementType is IStructType st
             && st.Name == TypeNames.Tuple;
@@ -245,6 +245,13 @@ namespace Microsoft.Quantum.QIR
             t is IPointerType pt
             && pt.ElementType is IStructType st
             && st.Name == TypeNames.String;
+
+        /// <summary>
+        /// Determines whether an LLVM type is a struct type representing a range of integers.
+        /// </summary>
+        public static bool IsRange(ITypeRef t) =>
+            t is IStructType st
+            && st.Name == TypeNames.Range;
     }
 
     /// <summary>
@@ -267,5 +274,13 @@ namespace Microsoft.Quantum.QIR
         public const string String = "String";
         public const string Array = "Array";
         public const string Tuple = "Tuple";
+    }
+
+    /// <summary>
+    /// Contains the names of common QIR attributes.
+    /// </summary>
+    public static class AttributeNames
+    {
+        public const string EntryPoint = "EntryPoint";
     }
 }
