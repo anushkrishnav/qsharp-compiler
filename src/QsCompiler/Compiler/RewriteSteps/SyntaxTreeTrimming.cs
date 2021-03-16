@@ -4,23 +4,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Quantum.QsCompiler.SyntaxTree;
-using Microsoft.Quantum.QsCompiler.Transformations.Monomorphization;
-using Microsoft.Quantum.QsCompiler.Transformations.Monomorphization.Validation;
+using Microsoft.Quantum.QsCompiler.Transformations.SyntaxTreeTrimming;
 
 namespace Microsoft.Quantum.QsCompiler.BuiltInRewriteSteps
 {
     /// <summary>
-    /// Replaces all type parametrized callables with concrete instantiations, dropping any unused callables.
+    /// Removes unused callables from the syntax tree.
     /// </summary>
-    internal class Monomorphization : IRewriteStep
+    internal class SyntaxTreeTrimming : IRewriteStep
     {
         private readonly bool keepAllIntrinsics;
 
-        public string Name => "Monomorphization";
+        public string Name => "Syntax Tree Trimming";
 
-        public int Priority => RewriteStepPriorities.TypeParameterElimination;
+        public int Priority => RewriteStepPriorities.SyntaxTreeTrimming;
 
-        public IDictionary<string, string?> AssemblyConstants { get; }
+        public IDictionary<string, string?> AssemblyConstants { get; } = new Dictionary<string, string?>();
 
         public IEnumerable<IRewriteStep.Diagnostic> GeneratedDiagnostics => Enumerable.Empty<IRewriteStep.Diagnostic>();
 
@@ -28,37 +27,28 @@ namespace Microsoft.Quantum.QsCompiler.BuiltInRewriteSteps
 
         public bool ImplementsTransformation => true;
 
-        public bool ImplementsPostconditionVerification => true;
+        public bool ImplementsPostconditionVerification => false;
 
         /// <summary>
-        /// Constructor for the Monomorphization Rewrite Step.
+        /// Constructor for the SyntaxTreeTrimming Rewrite Step.
         /// </summary>
         /// <param name="keepAllIntrinsics">When true, intrinsics will not be removed as part of the rewrite step.</param>
-        public Monomorphization(bool keepAllIntrinsics = true)
+        public SyntaxTreeTrimming(bool keepAllIntrinsics = true)
         {
             this.keepAllIntrinsics = keepAllIntrinsics;
-            this.AssemblyConstants = new Dictionary<string, string?>();
         }
 
         public bool PreconditionVerification(QsCompilation compilation) => compilation.EntryPoints.Any();
 
         public bool Transformation(QsCompilation compilation, out QsCompilation transformed)
         {
-            transformed = Monomorphize.Apply(compilation);
+            transformed = TrimSyntaxTree.Apply(compilation, this.keepAllIntrinsics);
             return true;
         }
 
         public bool PostconditionVerification(QsCompilation compilation)
         {
-            try
-            {
-                ValidateMonomorphization.Apply(compilation);
-            }
-            catch
-            {
-                return false;
-            }
-            return true;
+            throw new System.NotImplementedException();
         }
     }
 }

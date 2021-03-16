@@ -22,6 +22,7 @@ open Microsoft.Quantum.QsCompiler.Transformations.Targeting
 open Microsoft.VisualStudio.LanguageServer.Protocol
 open Xunit
 open Xunit.Abstractions
+open Microsoft.Quantum.QsCompiler.Transformations.SyntaxTreeTrimming
 
 
 type LinkingTests(output: ITestOutputHelper) =
