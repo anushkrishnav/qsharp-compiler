@@ -15,7 +15,7 @@
         <copyright>$copyright$</copyright>
         <tags>Quantum Q# QSharp QIR</tags>
         <dependencies>
-            <dependency id="Microsoft.Quantum.Compiler" version="$version$" />
+            <dependency id="Microsoft.Quantum.Compiler" version="0.15.210324888-pull" />
         </dependencies>
     </metadata>
     <files>
