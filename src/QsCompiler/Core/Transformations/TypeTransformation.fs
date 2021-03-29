@@ -3,6 +3,8 @@
 
 namespace Microsoft.Quantum.QsCompiler.Transformations.Core
 
+#nowarn "44" // TypeParameter.Range and UserDefinedType.Range are deprecated.
+
 open System.Collections.Immutable
 open Microsoft.Quantum.QsCompiler.DataTypes
 open Microsoft.Quantum.QsCompiler.SyntaxExtensions
@@ -42,7 +44,7 @@ type TypeTransformationBase(options: TransformationOptions) =
     default this.OnUserDefinedType udt =
         let ns, name = udt.Namespace, udt.Name
         let range = this.OnRangeInformation udt.Range
-        ExpressionType.UserDefinedType << UserDefinedType.New |> Node.BuildOr InvalidType (ns, name, range)
+        Node.BuildOr InvalidType (ns, name, range) (UserDefinedType.New >> UserDefinedType)
 
     abstract OnTypeParameter: QsTypeParameter -> ExpressionType
 
@@ -50,9 +52,7 @@ type TypeTransformationBase(options: TransformationOptions) =
         let origin = tp.Origin
         let name = tp.TypeName
         let range = this.OnRangeInformation tp.Range
-
-        ExpressionType.TypeParameter << QsTypeParameter.New
-        |> Node.BuildOr InvalidType (origin, name, range)
+        Node.BuildOr InvalidType (origin, name, range) (QsTypeParameter.New >> TypeParameter)
 
     abstract OnOperation: (ResolvedType * ResolvedType) * CallableInformation -> ExpressionType
 
@@ -123,6 +123,13 @@ type TypeTransformationBase(options: TransformationOptions) =
         if not options.Enable then
             t
         else
+            let range =
+                match t.Range with
+                | Annotated range -> Value range |> this.OnRangeInformation |> QsNullable<_>.Map Annotated
+                | Inferred range -> Value range |> this.OnRangeInformation |> QsNullable<_>.Map Inferred
+                | TypeRange.Generated -> Null
+                |> QsNullable.defaultValue TypeRange.Generated
+
             let transformed =
                 match t.Resolution with
                 | ExpressionType.UnitType -> this.OnUnitType()
@@ -144,5 +151,4 @@ type TypeTransformationBase(options: TransformationOptions) =
                 | ExpressionType.Pauli -> this.OnPauli()
                 | ExpressionType.Range -> this.OnRange()
 
-            let ResolvedType t = ResolvedType.New(true, t)
-            ResolvedType |> Node.BuildOr t transformed
+            ResolvedType.create range |> Node.BuildOr t transformed
