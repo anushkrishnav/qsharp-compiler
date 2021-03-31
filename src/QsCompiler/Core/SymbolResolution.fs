@@ -418,6 +418,10 @@ module SymbolResolution =
         if unresolvableReturnType
         then returnTypeErr :: excessTypeParamWarn |> List.toArray
         else excessTypeParamWarn |> List.toArray
+        |> ignore
+
+        // TODO: Warnings for unused type parameters?
+        Array.empty
 
     /// <summary>
     /// Helper function for ResolveCallableSignature that resolves the given argument tuple
