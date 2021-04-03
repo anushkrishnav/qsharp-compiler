@@ -21,9 +21,9 @@
   <files>
     <file src="QirGeneration.props" target="build\Microsoft.Quantum.QirGeneration.props" />
     <file src="..\LlvmBindings\bin\$Configuration$\netstandard2.1\publish\*.dll" target="lib\netstandard2.1" />
-    <file src="..\LlvmBindings\bin\$Configuration$\netstandard2.1\win-x64\publish\libLLVM.dll" target="lib\netstandard2.1\runtimes\win-x64" />
-    <file src="..\LlvmBindings\bin\$Configuration$\netstandard2.1\osx-x64\publish\libLLVM.dylib" target="lib\netstandard2.1\runtimes\osx-x64" />
-    <file src="..\LlvmBindings\bin\$Configuration$\netstandard2.1\ubuntu.18.04-x64\publish\libLLVM.so" target="lib\netstandard2.1\runtimes\ubuntu.18.04-x64" />
-    <file src="..\LlvmBindings\bin\$Configuration$\netstandard2.1\ubuntu.20.04-x64\publish\libLLVM.so" target="lib\netstandard2.1\runtimes\ubuntu.20.04-x64" />
+    <file src="..\LlvmBindings\bin\$Configuration$\netstandard2.1\win-x64\publish\libLLVM.dll" target="lib\netstandard2.1\runtimes\win-x64\native" />
+    <file src="..\LlvmBindings\bin\$Configuration$\netstandard2.1\osx-x64\publish\libLLVM.dylib" target="lib\netstandard2.1\runtimes\osx-x64\native" />
+    <file src="..\LlvmBindings\bin\$Configuration$\netstandard2.1\ubuntu.18.04-x64\publish\libLLVM.so" target="lib\netstandard2.1\runtimes\ubuntu.18.04-x64\native" />
+    <file src="..\LlvmBindings\bin\$Configuration$\netstandard2.1\ubuntu.20.04-x64\publish\libLLVM.so" target="lib\netstandard2.1\runtimes\ubuntu.20.04-x64\native" />
   </files>
 </package>
