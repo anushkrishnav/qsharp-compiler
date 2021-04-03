@@ -89,10 +89,10 @@ $all_ok = $True
 
 Publish-One '../src/QsCompiler/CommandLineTool/CommandLineTool.csproj'
 Publish-One '../src/QsCompiler/LlvmBindings/LlvmBindings.csproj'
-Publish-One '../src/QsCompiler/LlvmBindings/LlvmBindings.csproj' '-runtime=win-x64'
-Publish-One '../src/QsCompiler/LlvmBindings/LlvmBindings.csproj' '-runtime=osx-x64'
-Publish-One '../src/QsCompiler/LlvmBindings/LlvmBindings.csproj' '-runtime=ubuntu.18.04-x64'
-Publish-One '../src/QsCompiler/LlvmBindings/LlvmBindings.csproj' '-runtime=ubuntu.20.04-x64'
+Publish-One '../src/QsCompiler/LlvmBindings/LlvmBindings.csproj' '--runtime=win-x64'
+Publish-One '../src/QsCompiler/LlvmBindings/LlvmBindings.csproj' '--runtime=osx-x64'
+Publish-One '../src/QsCompiler/LlvmBindings/LlvmBindings.csproj' '--runtime=ubuntu.18.04-x64'
+Publish-One '../src/QsCompiler/LlvmBindings/LlvmBindings.csproj' '--runtime=ubuntu.20.04-x64'
 Publish-One '../src/QuantumSdk/Tools/BuildConfiguration/BuildConfiguration.csproj'
 Publish-One '../src/QuantumSdk/Tools/DefaultEntryPoint/DefaultEntryPoint.csproj'
 
