@@ -86,7 +86,8 @@ namespace Microsoft.Quantum.QsCompiler.QIR
 
         public override QsCallable OnCallableDeclaration(QsCallable c)
         {
-            if (this.SharedState.Functions.IsBuiltIn(c.FullName))
+            var unmangledName = NameDecorator.OriginalNameFromMonomorphized(c.FullName);
+            if (this.SharedState.Functions.BuiltIn.ContainsKey(unmangledName))
             {
                 return c;
             }
