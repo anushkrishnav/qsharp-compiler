@@ -386,7 +386,7 @@ type EntryPointSchemaTests(output: ITestOutputHelper) =
         let expectedEntryPointOperation, sourceJson = sampleEntryPointOperations.[sampleName]
         let memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(sourceJson))
         let entryPointOperation = Protocols.DeserializeFromJson(memoryStream)
-        Assert.True(entryPointOperation.ValueEquals(expectedEntryPointOperation))
+        Assert.True(Extensions.ValueEquals(entryPointOperation, expectedEntryPointOperation))
 
 
     [<Theory>]

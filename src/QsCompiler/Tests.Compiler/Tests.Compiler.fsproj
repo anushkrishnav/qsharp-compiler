@@ -304,7 +304,10 @@
     <Content Include="TestCases\QirTests\TestDoubles.qs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="TestCases\QirTests\TestEntryPoint.ll">
+    <Content Include="TestCases\QirTests\TestEntryPoint1.ll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestCases\QirTests\TestEntryPoint2.ll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="TestCases\QirTests\TestEntryPoint.qs">
@@ -496,6 +499,9 @@
     <None Include="TestCases\LinkingTests\ReferenceLinking.qs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="TestCases\LinkingTests\SyntaxTreeTrim.qs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="TestCases\LinkingTests\ValidEntryPoints.qs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -670,6 +676,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CommandLineTool\CommandLineTool.csproj" />
+    <ProjectReference Include="..\QirGeneration\QirGeneration.csproj" />
     <ProjectReference Include="..\TestTargets\Simulation\Example\Example.csproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
