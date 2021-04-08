@@ -151,9 +151,16 @@ type QsTypeParameter =
     override param.GetHashCode() = hash (param.Origin, param.TypeName)
 
     /// <summary>
-    /// Returns this type parameter with the given <paramref name="origin"/>.
+    /// Returns a copy of this <see cref="QsTypeParameter"/> with updated fields.
     /// </summary>
-    member param.WithOrigin origin = { param with Origin = origin }
+    member param.With([<Optional; DefaultParameterValue null>] ?origin,
+                      [<Optional; DefaultParameterValue null>] ?typeName,
+                      [<Optional; DefaultParameterValue null>] ?range) =
+        { param with
+            Origin = defaultArg origin param.Origin
+            TypeName = defaultArg typeName param.TypeName
+            Range = defaultArg range param.Range
+        }
 
 /// used to represent the use of a user defined type within a fully resolved Q# type
 [<CustomEquality>]
@@ -188,6 +195,18 @@ type UserDefinedType =
 
     member this.GetFullName() =
         { Namespace = this.Namespace; Name = this.Name }
+
+    /// <summary>
+    /// Returns a copy of this <see cref="UserDefinedType"/> with updated fields.
+    /// </summary>
+    member udt.With([<Optional; DefaultParameterValue null>] ?ns,
+                    [<Optional; DefaultParameterValue null>] ?name,
+                    [<Optional; DefaultParameterValue null>] ?range) =
+        { udt with
+            Namespace = defaultArg ns udt.Namespace
+            Name = defaultArg name udt.Name
+            Range = defaultArg range udt.Range
+        }
 
 /// Fully resolved operation characteristics used to describe the properties of a Q# callable.
 /// A resolved characteristic expression by construction never contains an empty or invalid set as inner expressions,
@@ -871,13 +890,20 @@ type QsLocalSymbol =
 type QsDeclarationAttribute =
     {
         /// Identifies the user defined type that the attribute instantiates.
-        /// The range information describes the range occupied by the attribute identifier relative to the attribute offset.
         /// Is Null only if the correct attribute could not be determined. Attributes set to Null should be ignored.
         TypeId: QsNullable<UserDefinedType>
+
+        /// <summary>
+        /// The range of <see cref="TypeId"/> relative to <see cref="Offset"/>.
+        /// </summary>
+        TypeIdRange: QsNullable<Range>
+
         /// Contains the argument with which the attribute is instantiated.
         Argument: TypedExpression
+
         /// Represents the position in the source file where the attribute is used.
         Offset: Position
+
         /// contains comments in the code associated with the attached attribute
         Comments: QsComments
     }
