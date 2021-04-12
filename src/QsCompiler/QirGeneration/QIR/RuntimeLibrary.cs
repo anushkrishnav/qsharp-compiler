@@ -104,6 +104,5 @@ namespace Microsoft.Quantum.QIR
     internal static class QuantumInstructionSet
     {
         internal const string DumpMachine = "dumpmachine__body";
-        internal const string DumpRegister = "dumpregister__body";
     }
 }

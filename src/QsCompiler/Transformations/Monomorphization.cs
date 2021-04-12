@@ -31,6 +31,8 @@ namespace Microsoft.Quantum.QsCompiler.Transformations.Monomorphization
     /// </summary>
     public static class Monomorphize
     {
+        private static bool IsIntrinsic(QsCallable callable) => callable.Specializations.Any(spec => spec.Implementation.IsIntrinsic);
+
         private static bool IsGeneric(QsCallable callable) =>
             callable.Signature.TypeParameters.Any() || callable.Specializations.Any(spec => spec.Signature.TypeParameters.Any());
 
@@ -63,7 +65,7 @@ namespace Microsoft.Quantum.QsCompiler.Transformations.Monomorphization
                     throw new ArgumentException($"Couldn't find definition for callable: {node.CallableName}");
                 }
 
-                if (monomorphizeIntrinsics || !originalGlobal.IsIntrinsic)
+                if (!IsIntrinsic(originalGlobal))
                 {
                     // Get concrete name
                     var concreteName = NameDecorator.PrependGuid(node.CallableName);
@@ -90,7 +92,7 @@ namespace Microsoft.Quantum.QsCompiler.Transformations.Monomorphization
                     .Where(elem =>
                         !(elem is QsNamespaceElement.QsCallable call)
                         || !IsGeneric(call.Item)
-                        || (call.Item.IsIntrinsic && !monomorphizeIntrinsics)
+                        || IsIntrinsic(call.Item)
                         || BuiltIn.RewriteStepDependencies.Contains(call.Item.FullName))
                     .Concat(elemsToAdd)
                     .ToImmutableArray());
