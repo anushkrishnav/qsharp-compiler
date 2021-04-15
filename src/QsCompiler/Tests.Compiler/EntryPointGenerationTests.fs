@@ -52,4 +52,10 @@ type EntryPointGenerationTests(output: ITestOutputHelper) =
         QirDriverGeneration.GenerateQirDriverCpp(entryPointOperation, cppMs)
         let cppReader = new StreamReader(cppMs, Encoding.UTF8)
         let generatedCpp = cppReader.ReadToEnd()
+        // TODO: Remove this when not needed anymore.
+        let generatedCppFile = Path.Join(testCasesDirectory, (testFileName + "_generated.cpp"))
+        let fileStream = new FileStream(generatedCppFile, FileMode.OpenOrCreate)
+        cppMs.Position <- int64(0)
+        cppMs.CopyTo fileStream
+        fileStream.Flush()
         Assert.Equal(expectedCpp, generatedCpp)
