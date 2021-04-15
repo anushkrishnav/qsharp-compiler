@@ -167,6 +167,9 @@ int main(int argc, char* argv[])
         ""File where the output produced during the simulation is written"");
 
 ");
+ if (entryPointOperation.InteropArguments.Count > 0) { 
+            this.Write("    // Add a command line option for each entry-point argument.\r\n");
+ } 
  foreach (var arg in entryPointOperation.InteropArguments) { 
             this.Write("    ");
             this.Write(this.ToStringHelper.ToStringWithCulture(arg.CppCliValueType()));
@@ -196,8 +199,8 @@ int main(int argc, char* argv[])
  } 
             this.Write("\r\n");
  } 
-            this.Write("\r\n    // With all the options added, parse arguments from the command line.\r\n    " +
-                    "CLI11_PARSE(app, argc, argv);\r\n\r\n");
+            this.Write("\r\n    // After all the options have been added, parse arguments from the command " +
+                    "line.\r\n    CLI11_PARSE(app, argc, argv);\r\n\r\n");
  foreach (var arg in entryPointOperation.InteropArguments) {
     switch (arg.Type) {
         case DataType.PauliType:

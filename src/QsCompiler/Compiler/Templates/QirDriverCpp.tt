@@ -161,6 +161,9 @@ int main(int argc, char* argv[])
         "--simulation-output", simulationOutputFile,
         "File where the output produced during the simulation is written");
 
+<# if (entryPointOperation.InteropArguments.Count > 0) { #>
+    // Add a command line option for each entry-point argument.
+<# } #>
 <# foreach (var arg in entryPointOperation.InteropArguments) { #>
     <#= arg.CppCliValueType() #> <#= arg.CliValueVariableName() #>;
 <# if (arg.CppCliVariableInitialValue() != null) { #>
@@ -174,7 +177,7 @@ int main(int argc, char* argv[])
 
 <# } #>
 
-    // With all the options added, parse arguments from the command line.
+    // After all the options have been added, parse arguments from the command line.
     CLI11_PARSE(app, argc, argv);
 
 <# foreach (var arg in entryPointOperation.InteropArguments) {
